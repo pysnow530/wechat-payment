@@ -19,16 +19,12 @@ class WechatPayment {
     private $_config;
 
     /**
-     * 保存传入的数据
-     */
-    private $_nonce_str;
-
-    /**
      * 错误信息
      */
     public $error = null;
 
     const PREPAY_GATEWAY = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+    const QUERY_GATEWAY = "https://api.mch.weixin.qq.com/pay/orderquery";
 
     /**
      * @param $config 微信支付配置数组
@@ -50,7 +46,7 @@ class WechatPayment {
         $data = array();
         $data["appid"]        = $this->_config["appid"];
         $data["mch_id"]       = $this->_config["mch_id"];
-        $data["nonce_str"] = $this->_nonce_str = str_shuffle("asdfghjkl");
+        $data["nonce_str"]    = $this->get_nonce_string();
         $data["body"]         = $body;
         $data["out_trade_no"] = $out_trade_no;
         $data["total_fee"]    = $total_fee;
@@ -74,12 +70,36 @@ class WechatPayment {
         $data = array();
         $data["appId"] = $this->_config["appid"];
         $data["timeStamp"] = time();
-        $data["nonceStr"]  = $this->_nonce_str;
+        $data["nonceStr"]  = $this->get_nonce_string();
         $data["package"]   = "prepay_id=$prepay_id";
         $data["signType"]  = "MD5";
         $data["paySign"]   = $this->sign($data);
 
         return json_encode($data);
+    }
+
+    /**
+     * 订单查询接口
+     * $param out_trade_no 商户订单号
+     * @return 字符串，交易状态
+     *          SUCCESS     支付成功
+     *          REFUND      转入退款
+     *          NOTPAY      未支付
+     *          CLOSED      已关闭
+     *          REVOKED     已撤销
+     *          USERPAYING  用户支付中
+     *          NOPAY       未支付
+     *          PAYERROR    支付失败
+     */
+    public function query_order($out_trade_no) {
+        $data = array();
+        $data["appid"]        = $this->_config["appid"];
+        $data["mch_id"]       = $this->_config["mch_id"];
+        $data["out_trade_no"] = $out_trade_no;
+        $data["nonce_str"]    = $this->get_nonce_string();
+        $result = $this->post(self::QUERY_GATEWAY, $data);
+
+        return $result["trade_state"];
     }
 
     public function array2xml($array) {
@@ -129,6 +149,10 @@ class WechatPayment {
         $sign = strtoupper(md5($stringSignTemp));
 
         return $sign;
+    }
+
+    public function get_nonce_string() {
+        return str_shuffle("pysnow530pysnow530pysnow530");
     }
 
 }
