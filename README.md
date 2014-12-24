@@ -1,7 +1,7 @@
 #wechat-payment
 
 ##微信支付类(WechatPayment)<br>
------------------------------
+
 ###JSAPI支付步骤:<br>
 ####1. 使用微信支付配置参数生成支付类实例<br>
             $config = array(<br>
