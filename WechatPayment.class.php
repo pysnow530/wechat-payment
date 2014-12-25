@@ -79,6 +79,36 @@ class WechatPayment {
     }
 
     /**
+     * 获取发送到通知地址的数据(在通知地址内使用)
+     * @return 结果数组，如果不是微信服务器发送的数据返回null
+     *          appid
+     *          bank_type
+     *          cash_fee
+     *          fee_type
+     *          is_subscribe
+     *          mch_id
+     *          nonce_str
+     *          openid
+     *          out_trade_no    商户订单号
+     *          result_code
+     *          return_code
+     *          sign
+     *          time_end
+     *          total_fee       总金额
+     *          trade_type
+     *          transaction_id  微信支付订单号
+     */
+    public function get_back_data() {
+        $xml = file_get_contents("php://input");
+        $data = $this->xml2array($xml);
+        if ($this->validate($data)) {
+            return $data;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * 订单查询接口
      * $param out_trade_no 商户订单号
      * @return 字符串，交易状态
