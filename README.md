@@ -18,7 +18,7 @@
                             "http://example.com/pay/notify" // 通知地址
                         );
 ####3. 获取js调起支付的第二项参数
-            $package = $payment->get_package($prepay_id);
+            $package = json_encode($payment->get_package($prepay_id));
 ####4. 使用js发起支付
             print "
                 <script>

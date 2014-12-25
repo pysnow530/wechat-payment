@@ -75,7 +75,7 @@ class WechatPayment {
         $data["signType"]  = "MD5";
         $data["paySign"]   = $this->sign($data);
 
-        return json_encode($data);
+        return $data;
     }
 
     /**
