@@ -104,8 +104,25 @@ class WechatPayment {
         if ($this->validate($data)) {
             return $data;
         } else {
+            $this->response_back("FAIL", "签名失败");
             return null;
         }
+    }
+
+    /**
+     * 响应微信支付后台通知
+     * @param $return_code 返回状态码 SUCCESS/FAIL
+     * @param $return_msg  返回信息
+     */
+    public function response_back($return_code="SUCCESS", $return_msg=null) {
+        $data = array();
+        $data["return_code"] = $return_code;
+        if ($return_msg) {
+            $data["return_msg"] = $return_msg;
+        }
+        $xml = $this->array2xml($data);
+
+        print $xml;
     }
 
     /**
