@@ -156,6 +156,22 @@ class WechatPayment {
         return $sign;
     }
 
+    /**
+     * 验证是否是腾讯服务器推送数据
+     * @param $data 数据数组
+     * @return 布尔值
+     */
+    public function validate($data) {
+        if (!isset($data["sign"])) {
+            return false;
+        }
+
+        $sign = $data["sign"];
+        unset($data["sign"]);
+
+        return $this->sign($data) == $sign;
+    }
+
     public function get_nonce_string() {
         return str_shuffle("pysnow530pysnow530pysnow530");
     }
