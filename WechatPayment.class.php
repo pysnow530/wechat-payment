@@ -90,6 +90,7 @@ class WechatPayment {
      *          USERPAYING  用户支付中
      *          NOPAY       未支付
      *          PAYERROR    支付失败
+     *          null        订单不存在或其它错误，错误描述$this->error
      */
     public function query_order($out_trade_no) {
         $data = array();
@@ -98,8 +99,12 @@ class WechatPayment {
         $data["out_trade_no"] = $out_trade_no;
         $data["nonce_str"]    = $this->get_nonce_string();
         $result = $this->post(self::QUERY_GATEWAY, $data);
-
-        return $result["trade_state"];
+        if ($result["result_code"] == "SUCCESS") {
+            return $result["trade_state"];
+        } else {
+            $this->error = $result["err_code_des"];
+            return null;
+        }
     }
 
     public function array2xml($array) {
