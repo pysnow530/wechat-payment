@@ -104,7 +104,6 @@ class WechatPayment {
         if ($this->validate($data)) {
             return $data;
         } else {
-            $this->response_back("FAIL", "签名失败");
             return null;
         }
     }
