@@ -50,7 +50,7 @@ class WechatPayment {
         $data["body"]         = $body;
         $data["out_trade_no"] = $out_trade_no;
         $data["total_fee"]    = $total_fee;
-        $data["spbill_create_ip"] = $_SERVER["REMOTE_ADDRESS"];
+        $data["spbill_create_ip"] = $_SERVER["REMOTE_ADDR"];
         $data["notify_url"]   = $notify_url;
         $data["trade_type"]   = $trade_type;
 
