@@ -175,6 +175,9 @@ class WechatPayment {
     public function post($url, $data) {
         $data["sign"] = $this->sign($data);
 
+        if (!function_exists('curl_init')) {
+            throw new \Exception('Please enable php curl module!');
+        }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
