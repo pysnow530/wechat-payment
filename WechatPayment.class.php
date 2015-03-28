@@ -23,8 +23,8 @@ class WechatPayment {
      */
     public $error = null;
 
-    const PREPAY_GATEWAY = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-    const QUERY_GATEWAY = "https://api.mch.weixin.qq.com/pay/orderquery";
+    const PREPAY_GATEWAY = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
+    const QUERY_GATEWAY = 'https://api.mch.weixin.qq.com/pay/orderquery';
 
     /**
      * @param $config 微信支付配置数组
@@ -42,23 +42,23 @@ class WechatPayment {
      * @param $trade_type   交易类型
      */
     public function get_prepay_id($body, $out_trade_no, $total_fee,
-            $notify_url, $trade_type="JSAPI") {
+            $notify_url, $trade_type='JSAPI') {
         $data = array();
-        $data["appid"]        = $this->_config["appid"];
-        $data["mch_id"]       = $this->_config["mch_id"];
-        $data["nonce_str"]    = $this->get_nonce_string();
-        $data["body"]         = $body;
-        $data["out_trade_no"] = $out_trade_no;
-        $data["total_fee"]    = $total_fee;
-        $data["spbill_create_ip"] = $_SERVER["REMOTE_ADDR"];
-        $data["notify_url"]   = $notify_url;
-        $data["trade_type"]   = $trade_type;
+        $data['appid']        = $this->_config['appid'];
+        $data['mch_id']       = $this->_config['mch_id'];
+        $data['nonce_str']    = $this->get_nonce_string();
+        $data['body']         = $body;
+        $data['out_trade_no'] = $out_trade_no;
+        $data['total_fee']    = $total_fee;
+        $data['spbill_create_ip'] = $_SERVER['REMOTE_ADDR'];
+        $data['notify_url']   = $notify_url;
+        $data['trade_type']   = $trade_type;
 
         $result = $this->post(self::PREPAY_GATEWAY, $data);
-        if ($result["return_code"] == "SUCCESS") {
-            return $result["prepay_id"];
+        if ($result['return_code'] == 'SUCCESS') {
+            return $result['prepay_id'];
         } else {
-            $this->error = $result["return_msg"];
+            $this->error = $result['return_msg'];
             return null;
         }
     }
@@ -68,12 +68,12 @@ class WechatPayment {
      */
     public function get_package($prepay_id) {
         $data = array();
-        $data["appId"] = $this->_config["appid"];
-        $data["timeStamp"] = time();
-        $data["nonceStr"]  = $this->get_nonce_string();
-        $data["package"]   = "prepay_id=$prepay_id";
-        $data["signType"]  = "MD5";
-        $data["paySign"]   = $this->sign($data);
+        $data['appId'] = $this->_config['appid'];
+        $data['timeStamp'] = time();
+        $data['nonceStr']  = $this->get_nonce_string();
+        $data['package']   = 'prepay_id=' . $prepay_id;
+        $data['signType']  = 'MD5';
+        $data['paySign']   = $this->sign($data);
 
         return $data;
     }
@@ -99,7 +99,7 @@ class WechatPayment {
      *          transaction_id  微信支付订单号
      */
     public function get_back_data() {
-        $xml = file_get_contents("php://input");
+        $xml = file_get_contents('php://input');
         $data = $this->xml2array($xml);
         if ($this->validate($data)) {
             return $data;
@@ -113,11 +113,11 @@ class WechatPayment {
      * @param $return_code 返回状态码 SUCCESS/FAIL
      * @param $return_msg  返回信息
      */
-    public function response_back($return_code="SUCCESS", $return_msg=null) {
+    public function response_back($return_code='SUCCESS', $return_msg=null) {
         $data = array();
-        $data["return_code"] = $return_code;
+        $data['return_code'] = $return_code;
         if ($return_msg) {
-            $data["return_msg"] = $return_msg;
+            $data['return_msg'] = $return_msg;
         }
         $xml = $this->array2xml($data);
 
@@ -140,25 +140,25 @@ class WechatPayment {
      */
     public function query_order($out_trade_no) {
         $data = array();
-        $data["appid"]        = $this->_config["appid"];
-        $data["mch_id"]       = $this->_config["mch_id"];
-        $data["out_trade_no"] = $out_trade_no;
-        $data["nonce_str"]    = $this->get_nonce_string();
+        $data['appid']        = $this->_config['appid'];
+        $data['mch_id']       = $this->_config['mch_id'];
+        $data['out_trade_no'] = $out_trade_no;
+        $data['nonce_str']    = $this->get_nonce_string();
         $result = $this->post(self::QUERY_GATEWAY, $data);
-        if ($result["result_code"] == "SUCCESS") {
-            return $result["trade_state"];
+        if ($result['result_code'] == 'SUCCESS') {
+            return $result['trade_state'];
         } else {
-            $this->error = $result["err_code_des"];
+            $this->error = $result['err_code_des'];
             return null;
         }
     }
 
     public function array2xml($array) {
-        $xml = "<xml>" . PHP_EOL;
+        $xml = '<xml>' . PHP_EOL;
         foreach ($array as $k => $v) {
-            $xml .= "<$k><![CDATA[$v]]></$k>" . PHP_EOL;
+            $xml .= '<$k><![CDATA[$v]]></$k>' . PHP_EOL;
         }
-        $xml .= "</xml>";
+        $xml .= '</xml>';
 
         return $xml;
     }
@@ -173,7 +173,7 @@ class WechatPayment {
     }
 
     public function post($url, $data) {
-        $data["sign"] = $this->sign($data);
+        $data['sign'] = $this->sign($data);
 
         if (!function_exists('curl_init')) {
             throw new \Exception('Please enable php curl module!');
@@ -193,13 +193,13 @@ class WechatPayment {
 
     public function sign($data) {
         ksort($data);
-        $string1 = "";
+        $string1 = '';
         foreach ($data as $k => $v) {
             if ($v) {
-                $string1 .= "$k=$v&";
+                $string1 .= '$k=$v&';
             }
         }
-        $stringSignTemp = $string1 . "key=" . $this->_config["key"];
+        $stringSignTemp = $string1 . 'key=' . $this->_config['key'];
         $sign = strtoupper(md5($stringSignTemp));
 
         return $sign;
@@ -211,18 +211,18 @@ class WechatPayment {
      * @return 布尔值
      */
     public function validate($data) {
-        if (!isset($data["sign"])) {
+        if (!isset($data['sign'])) {
             return false;
         }
 
-        $sign = $data["sign"];
-        unset($data["sign"]);
+        $sign = $data['sign'];
+        unset($data['sign']);
 
         return $this->sign($data) == $sign;
     }
 
     public function get_nonce_string() {
-        return str_shuffle("pysnow530pysnow530pysnow530");
+        return str_shuffle('pysnow530pysnow530pysnow530');
     }
 
 }
