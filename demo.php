@@ -10,7 +10,7 @@ $payment = new \Library\WechatPayment($config);
 $prepay_id = $payment->get_prepay_id(
     '一斤大白菜',       // 商品描述
     'E1234567890',      // 商户订单号
-    1,                  // 总金额(单位：分)
+    '1',                // 总金额(单位：分)
     'http://example.com/pay/notify' // 通知地址
 );
 $package = json_encode($payment->get_package($prepay_id));
